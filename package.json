@@ -1,0 +1,9 @@
+{
+  "name": "full-stack-movie-platform",
+  "version": "1.0.0",
+  "description": "Deployment script for full stack movie platform",
+  "scripts": {
+    "postinstall": "cd frontend && npm install && npm run build && cd ../backend && npm install",
+    "start": "cd backend && node server.js"
+  }
+}

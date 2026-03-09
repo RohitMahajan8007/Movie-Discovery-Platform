@@ -5,6 +5,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const movieRoutes = require("./routes/movies");
 const userRoutes = require("./routes/users");
+const path = require("path");
 
 const app = express();
 
@@ -16,6 +17,16 @@ app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/users", userRoutes);
 
+/* Serve React frontend */
+const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(frontendPath));
+
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    return next();
+  }
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
 // Basic error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -30,7 +41,6 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const connectDB = async () => {
   try {
     console.log("Attempting to connect to primary MongoDB...");
-    // Attempt standard connection with a longer timeout for cloud DB
     await mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 10000 });
     console.log("Connected to MongoDB Atlas");
   } catch (err) {
